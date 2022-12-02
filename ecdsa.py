@@ -55,14 +55,14 @@ class ECDSA:
 
     # PK és SK generálása
     def keygen(self):
-        # d
+        # d, azaz SK kiszamitas
         SK = random.randint(1, self.q - 1)
         # B = d*G
         PK = self.multiply(SK, self.G)
         return SK, PK
 
     # Aláirás generálása
-    # [r, s]
+    # [r, s] pár
     def sign(self, SK, hash):
         k = random.randint(1, self.q-1)
         k = int(hex(k), 16)
@@ -73,8 +73,9 @@ class ECDSA:
 
     # Aláírás ellenőrzése
     def verify(self, PK, signature, hash):
-        # u1 = (s^-1 * hash) * G
+        # u1 = (s^-1 * hash) * G(gen point)
         u1 = self.multiply(pow(signature["s"], -1, self.q)*hash, self.G)
+        # u2 = (s^-1 * r) * B(pub key)
         u2 = self.multiply((pow(signature["s"], -1, self.q) * signature["r"]), PK)
         u3 = self.add(u1, u2)
         print(u3)
